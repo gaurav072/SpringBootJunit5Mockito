@@ -16,8 +16,9 @@ import java.util.Optional;
 public class UserDaoImpl implements UserDao {
     private UserRepository userRepository;
     private BaseTranslator<UserDto,UserEntity> userEntityTranslator;
+
     @Override
-    public List<UserEntity> findAll() {
+    public List<UserDto> findAll() {
         return null;
     }
 
@@ -27,7 +28,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional<UserEntity> findById(long userId) {
-        return userRepository.findById(userId);
+    public Optional<UserDto> findById(long userId) {
+        return userRepository.getById(userId);
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserDao {
-    List<UserEntity> findAll();
+    List<UserDto> findAll();
     long create(UserDto userDto);
-    Optional<UserEntity> findById(long userId);
+    Optional<UserDto> findById(long userId);
 }

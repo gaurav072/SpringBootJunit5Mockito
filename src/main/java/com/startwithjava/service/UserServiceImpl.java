@@ -16,9 +16,8 @@ import java.util.Optional;
 public class UserServiceImpl implements  UserService {
     private UserDao userDao;
     private BaseTranslator<User,UserDto> userDtoTranslator;
-    public List<User> findAll(){
-        User user =new User(1L,"Gaurav","gaurav.kumar@gmail.com");
-        return Arrays.asList(user);
+    public List<UserDto> findAll(){
+       return userDao.findAll();
     }
 
     @Override
@@ -28,6 +27,6 @@ public class UserServiceImpl implements  UserService {
 
     @Override
     public Optional<UserDto> findById(long userId) {
-        return userDao.findById(userId).map(UserDto::new);
+        return userDao.findById(userId);
     }
 }

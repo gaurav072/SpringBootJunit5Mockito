@@ -1,15 +1,12 @@
 package com.startwithjava.service.dto;
 
-import com.startwithjava.dao.entity.UserEntity;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public class UserDto {
-    private long id;
-    private String name;
-    private String email;
-
-    public UserDto(UserEntity userEntity){
-        this(userEntity.getId(),userEntity.getName(),userEntity.getEmail());
-    }
+    private final long id;
+    private final String name;
+    private final String email;
 }

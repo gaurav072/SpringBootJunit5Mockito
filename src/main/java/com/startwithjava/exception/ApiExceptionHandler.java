@@ -1,6 +1,4 @@
 package com.startwithjava.exception;
-
-import com.sun.xml.internal.messaging.saaj.soap.SOAPIOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ApiExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handlerGenericError(Exception ex){
+        ex.printStackTrace();
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @ExceptionHandler(UserNotFoundException.class)
