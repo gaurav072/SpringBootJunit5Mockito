@@ -1,2 +1,2 @@
-# JunitMockitoExample
-Example for Junit &amp; Mockito
+# SpringBootCRUDWithJunit
+SpringBoot based application having controller,service and dao layers. Also having unit test cases for each layer
