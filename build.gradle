@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
 	compileOnly 'org.projectlombok:lombok:1.18.2'
+	compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.0'
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
