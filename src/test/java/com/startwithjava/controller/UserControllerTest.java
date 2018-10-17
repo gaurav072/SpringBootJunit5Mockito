@@ -1,52 +1,50 @@
 package com.startwithjava.controller;
 
-import com.startwithjava.exception.ApiExceptionHandler;
-import com.startwithjava.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.startwithjava.service.UserServiceImpl;
+import com.startwithjava.service.dto.UserDto;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = UserController.class, secure = false)
 public class UserControllerTest {
-   private MockMvc mockMvc;
-   @Mock
-   private UserService userService;
-   @InjectMocks
-   private UserController userController;
+	 @Autowired
+     private MockMvc mockMvc;
 
-   @BeforeEach
-   public void setup(){
-      mockMvc = MockMvcBuilders.standaloneSetup(userController)
-              .setControllerAdvice(new ApiExceptionHandler())
-              .build();
-   }
+	 @Autowired
+	    private MockMvc mvc;
+	 
+	    @MockBean
+	    private UserServiceImpl userService;
+
 
    @Test
    @DisplayName("Test findAll()")
    public void findAllUsers_InputsAreValid_ReturnUserList() throws Exception {
-      when(userService.findAll()).thenReturn(Arrays.asList(User.builder().build()));
+      when(userService.findAll()).thenReturn(Arrays.asList(UserDto.builder().build()));
       mockMvc.perform(get("/users/")
               .accept(MediaType.APPLICATION_JSON))
               .andExpect(status().isOk());
+      
+      verify(userService,times(1)).findAll();
    }
    @Test
    @DisplayName("Test findById() with invalid userId")
@@ -55,6 +53,7 @@ public class UserControllerTest {
       mockMvc.perform(get("/users/{id}",1L)
               .accept(MediaType.APPLICATION_JSON))
               .andExpect(status().isNotFound());
+      verify(userService,times(1)).findById(Mockito.anyLong());
    }
    @Test
    @DisplayName("Test findById() with invalid userId")
@@ -62,7 +61,8 @@ public class UserControllerTest {
       when(userService.findById(Mockito.anyLong())).thenReturn(Optional.empty());
       mockMvc.perform(get("/users/{id}","aa")
               .accept(MediaType.APPLICATION_JSON))
-              .andExpect(status().isNotFound());
+              .andExpect(status().isInternalServerError());
+      
    }
 
 }

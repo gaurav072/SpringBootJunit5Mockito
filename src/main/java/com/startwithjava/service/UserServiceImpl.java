@@ -1,15 +1,16 @@
 package com.startwithjava.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.startwithjava.controller.User;
 import com.startwithjava.dao.UserDao;
 import com.startwithjava.service.dto.UserDto;
 import com.startwithjava.translator.BaseTranslator;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
