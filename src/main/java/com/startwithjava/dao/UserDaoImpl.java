@@ -1,6 +1,5 @@
 package com.startwithjava.dao;
 
-import com.startwithjava.controller.User;
 import com.startwithjava.dao.entity.UserEntity;
 import com.startwithjava.dao.repository.UserRepository;
 import com.startwithjava.service.dto.UserDto;

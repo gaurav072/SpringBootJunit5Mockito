@@ -1,14 +1,11 @@
 package com.startwithjava.controller;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.Optional;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.startwithjava.controller.request.CreateUserRequest;
+import com.startwithjava.controller.response.UserResponse;
+import com.startwithjava.service.UserServiceImpl;
+import com.startwithjava.service.dto.UserDto;
+import com.startwithjava.translator.BaseTranslator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,26 +17,35 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.startwithjava.service.UserServiceImpl;
-import com.startwithjava.service.dto.UserDto;
+import java.util.Arrays;
+import java.util.Optional;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = UserController.class, secure = false)
 public class UserControllerTest {
-	 @Autowired
-     private MockMvc mockMvc;
+@Autowired
+private MockMvc mockMvc;
 
-	 @Autowired
-	    private MockMvc mvc;
-	 
-	    @MockBean
-	    private UserServiceImpl userService;
+@MockBean
+private UserServiceImpl userService;
+
+private ObjectMapper objectMapper= new ObjectMapper();
+   @MockBean
+   private BaseTranslator<CreateUserRequest, UserDto> createUserRequestToUserDtoTranslator;
+   @MockBean
+   private BaseTranslator<UserDto, UserResponse> userDtoToUserResponseTranslator;
 
 
    @Test
    @DisplayName("Test findAll()")
    public void findAllUsers_InputsAreValid_ReturnUserList() throws Exception {
-      when(userService.findAll()).thenReturn(Arrays.asList(UserDto.builder().build()));
+      when(userService.findAll()).thenReturn(Arrays.asList(new UserDto()));
       mockMvc.perform(get("/users/")
               .accept(MediaType.APPLICATION_JSON))
               .andExpect(status().isOk());
@@ -55,6 +61,7 @@ public class UserControllerTest {
               .andExpect(status().isNotFound());
       verify(userService,times(1)).findById(Mockito.anyLong());
    }
+
    @Test
    @DisplayName("Test findById() with invalid userId")
    public void findUserById_WhenIdIsInValid_ReturnUserAsResponse() throws Exception {
@@ -62,7 +69,58 @@ public class UserControllerTest {
       mockMvc.perform(get("/users/{id}","aa")
               .accept(MediaType.APPLICATION_JSON))
               .andExpect(status().isInternalServerError());
-      
+   }
+
+   @Test
+   @DisplayName("Test createUser with valid request")
+   public void createUser_WhenCreateUserRequestIsIsValid_ReturnUserAsResponse() throws Exception {
+      //Given
+      CreateUserRequest createUserRequest = new CreateUserRequest();
+      createUserRequest.setEmail("abc@mail.com");
+      createUserRequest.setName("Gaurav");
+
+      UserDto userDto = new UserDto();
+      userDto.setEmail("abc@mail.com");
+      userDto.setName("Gaurav");
+
+
+      when(userService.create(Mockito.any(UserDto.class))).thenReturn(1l);
+      when(createUserRequestToUserDtoTranslator.translate(Mockito.any(CreateUserRequest.class),eq(UserDto.class))).thenReturn(userDto);
+      //When
+      when(userService.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+      mockMvc.perform(post("/users/")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(createUserRequest))
+              .accept(MediaType.APPLICATION_JSON))
+              .andDo(print())
+              .andExpect(status().isOk());
+
+      //Then
+      verify(userService,times(1)).create(Mockito.any(UserDto.class));
+      verify(createUserRequestToUserDtoTranslator,times(1)).translate(Mockito.any(CreateUserRequest.class),eq(UserDto.class));
+   }
+
+   @Test
+   @DisplayName("Test createUser with Invalid request")
+   public void createUser_WhenCreateUserRequestIsInValid_ReturnUserAsResponse() throws Exception {
+      //Given
+      CreateUserRequest createUserRequest = new CreateUserRequest();
+
+      UserDto userDto = new UserDto();
+      userDto.setEmail("abc@mail.com");
+      userDto.setName("Gaurav");
+
+
+      when(userService.create(Mockito.any(UserDto.class))).thenReturn(1l);
+      when(createUserRequestToUserDtoTranslator.translate(Mockito.any(CreateUserRequest.class),eq(UserDto.class))).thenReturn(userDto);
+      //When
+      when(userService.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+      mockMvc.perform(post("/users/")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(createUserRequest))
+              .accept(MediaType.APPLICATION_JSON))
+              .andDo(print())
+               .andExpect(status().isBadRequest());
    }
 
 }

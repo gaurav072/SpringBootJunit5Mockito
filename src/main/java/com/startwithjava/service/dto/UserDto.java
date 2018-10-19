@@ -1,14 +1,13 @@
 package com.startwithjava.service.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
-@AllArgsConstructor
 @Getter
-@Builder
+@Setter
 public class UserDto {
-    private final long id;
-    private final String name;
-    private final String email;
+    private long id;
+    private String name;
+    private String email;
 }

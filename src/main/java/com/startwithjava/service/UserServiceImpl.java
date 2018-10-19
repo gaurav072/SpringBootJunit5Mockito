@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.startwithjava.controller.User;
+import com.startwithjava.dto.User;
 import com.startwithjava.dao.UserDao;
 import com.startwithjava.service.dto.UserDto;
 import com.startwithjava.translator.BaseTranslator;
@@ -22,8 +22,8 @@ public class UserServiceImpl implements  UserService {
     }
 
     @Override
-    public long create(User user) {
-        return userDao.create(userDtoTranslator.translate(user,UserDto.class));
+    public long create(UserDto user) {
+        return userDao.create(user);
     }
 
     @Override

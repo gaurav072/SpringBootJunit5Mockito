@@ -1,4 +1,4 @@
-package com.startwithjava.controller;
+package com.startwithjava.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
