@@ -126,7 +126,7 @@ private ObjectMapper objectMapper= new ObjectMapper();
    }
    @Test
    @DisplayName("Test createUser with Invalid request")
-   public void createUser_WhenCreateEmployeeRequestBadInput_ReturnUserAsResponse() throws Exception {
+   public void createUser_WhenCreateEmployeeRequestBadInput_ReturnBadRequestAsResponse() throws Exception {
       //Given
       Map<String,Object> createEmployeeRequest = new HashMap<>();
       createEmployeeRequest.put("name","Suman");
