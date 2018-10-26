@@ -2,9 +2,8 @@ package com.startwithjava.controller;
 
 import java.util.List;
 
-import com.startwithjava.controller.request.CreateUserRequest;
+import com.startwithjava.controller.request.CreateEmployeeRequest;
 import com.startwithjava.controller.response.UserResponse;
-import com.startwithjava.dto.User;
 import com.startwithjava.service.dto.UserDto;
 import com.startwithjava.translator.BaseTranslator;
 import org.springframework.http.HttpStatus;
@@ -23,14 +22,14 @@ import javax.validation.Valid;
 @RequestMapping("/users/")
 public class UserController {
     private UserService userService;
-    private BaseTranslator<CreateUserRequest, UserDto> createUserRequestToUserDtoTranslator;
+    private BaseTranslator<CreateEmployeeRequest, UserDto> createUserRequestToUserDtoTranslator;
     private BaseTranslator<UserDto, UserResponse> userDtoToUserResponseTranslator;
     @GetMapping
     public ResponseEntity<List<UserResponse>> findAllUsers(){
         return new ResponseEntity(userDtoToUserResponseTranslator.translate(userService.findAll(),UserResponse.class), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody @Valid CreateUserRequest user){
+    public ResponseEntity<Object> create(@RequestBody @Valid CreateEmployeeRequest user){
         return new ResponseEntity(userService.create(createUserRequestToUserDtoTranslator.translate(user,UserDto.class)), HttpStatus.OK);
     }
     @GetMapping("{id}")

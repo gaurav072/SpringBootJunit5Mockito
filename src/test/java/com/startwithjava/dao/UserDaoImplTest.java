@@ -1,11 +1,9 @@
 package com.startwithjava.dao;
 
-import com.startwithjava.controller.request.CreateUserRequest;
 import com.startwithjava.dao.entity.UserEntity;
 import com.startwithjava.dao.repository.UserRepository;
 import com.startwithjava.service.dto.UserDto;
 import com.startwithjava.translator.BaseTranslator;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

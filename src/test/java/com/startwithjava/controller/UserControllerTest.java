@@ -1,7 +1,7 @@
 package com.startwithjava.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.startwithjava.controller.request.CreateUserRequest;
+import com.startwithjava.controller.request.CreateEmployeeRequest;
 import com.startwithjava.controller.response.UserResponse;
 import com.startwithjava.service.UserServiceImpl;
 import com.startwithjava.service.dto.UserDto;
@@ -18,6 +18,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -37,7 +39,7 @@ private UserServiceImpl userService;
 
 private ObjectMapper objectMapper= new ObjectMapper();
    @MockBean
-   private BaseTranslator<CreateUserRequest, UserDto> createUserRequestToUserDtoTranslator;
+   private BaseTranslator<CreateEmployeeRequest, UserDto> createUserRequestToUserDtoTranslator;
    @MockBean
    private BaseTranslator<UserDto, UserResponse> userDtoToUserResponseTranslator;
 
@@ -75,9 +77,9 @@ private ObjectMapper objectMapper= new ObjectMapper();
    @DisplayName("Test createUser with valid request")
    public void createUser_WhenCreateUserRequestIsIsValid_ReturnUserAsResponse() throws Exception {
       //Given
-      CreateUserRequest createUserRequest = new CreateUserRequest();
-      createUserRequest.setEmail("abc@mail.com");
-      createUserRequest.setName("Gaurav");
+      CreateEmployeeRequest createEmployeeRequest = new CreateEmployeeRequest();
+      createEmployeeRequest.setEmail("abc@mail.com");
+      createEmployeeRequest.setName("Gaurav");
 
       UserDto userDto = new UserDto();
       userDto.setEmail("abc@mail.com");
@@ -85,26 +87,26 @@ private ObjectMapper objectMapper= new ObjectMapper();
 
 
       when(userService.create(Mockito.any(UserDto.class))).thenReturn(1l);
-      when(createUserRequestToUserDtoTranslator.translate(Mockito.any(CreateUserRequest.class),eq(UserDto.class))).thenReturn(userDto);
+      when(createUserRequestToUserDtoTranslator.translate(Mockito.any(CreateEmployeeRequest.class),eq(UserDto.class))).thenReturn(userDto);
       //When
       when(userService.findById(Mockito.anyLong())).thenReturn(Optional.empty());
       mockMvc.perform(post("/users/")
               .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(createUserRequest))
+              .content(objectMapper.writeValueAsString(createEmployeeRequest))
               .accept(MediaType.APPLICATION_JSON))
               .andDo(print())
               .andExpect(status().isOk());
 
       //Then
       verify(userService,times(1)).create(Mockito.any(UserDto.class));
-      verify(createUserRequestToUserDtoTranslator,times(1)).translate(Mockito.any(CreateUserRequest.class),eq(UserDto.class));
+      verify(createUserRequestToUserDtoTranslator,times(1)).translate(Mockito.any(CreateEmployeeRequest.class),eq(UserDto.class));
    }
 
    @Test
    @DisplayName("Test createUser with Invalid request")
    public void createUser_WhenCreateUserRequestIsInValid_ReturnUserAsResponse() throws Exception {
       //Given
-      CreateUserRequest createUserRequest = new CreateUserRequest();
+      CreateEmployeeRequest createEmployeeRequest = new CreateEmployeeRequest();
 
       UserDto userDto = new UserDto();
       userDto.setEmail("abc@mail.com");
@@ -112,15 +114,31 @@ private ObjectMapper objectMapper= new ObjectMapper();
 
 
       when(userService.create(Mockito.any(UserDto.class))).thenReturn(1l);
-      when(createUserRequestToUserDtoTranslator.translate(Mockito.any(CreateUserRequest.class),eq(UserDto.class))).thenReturn(userDto);
+      when(createUserRequestToUserDtoTranslator.translate(Mockito.any(CreateEmployeeRequest.class),eq(UserDto.class))).thenReturn(userDto);
       //When
       when(userService.findById(Mockito.anyLong())).thenReturn(Optional.empty());
       mockMvc.perform(post("/users/")
               .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(createUserRequest))
+              .content(objectMapper.writeValueAsString(createEmployeeRequest))
               .accept(MediaType.APPLICATION_JSON))
               .andDo(print())
                .andExpect(status().isBadRequest());
+   }
+   @Test
+   @DisplayName("Test createUser with Invalid request")
+   public void createUser_WhenCreateEmployeeRequestBadInput_ReturnUserAsResponse() throws Exception {
+      //Given
+      Map<String,Object> createEmployeeRequest = new HashMap<>();
+      createEmployeeRequest.put("name","Suman");
+      createEmployeeRequest.put("email","suman@mail.com");
+      createEmployeeRequest.put("joiningDate","bad-date-str");
+
+      mockMvc.perform(post("/users/")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(createEmployeeRequest ))
+              .accept(MediaType.APPLICATION_JSON))
+              .andDo(print())
+              .andExpect(status().isBadRequest());
    }
 
 }
